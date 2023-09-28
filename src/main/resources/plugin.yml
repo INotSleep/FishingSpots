@@ -1,0 +1,6 @@
+name: FishingSpots
+version: '${version}'
+main: me.inotsleep.fishingspots.FishingSpots
+api-version: '1.16'
+authors:
+  - INotSleep
