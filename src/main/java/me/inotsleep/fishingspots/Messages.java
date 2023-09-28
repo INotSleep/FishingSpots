@@ -23,14 +23,14 @@ public class Messages extends AbstractConfig {
                 "    length - length of progress bar\n" +
                 "    format - format of progress bar, where {0} is progress bar (not included in length)\n" +
                 "    hookDamageColors - colors, based on line damage (double|color)\n" +
-                "game - messages of game (actionbar)" +
-                "    start - message when game started" +
-                "    loose - messages when player looses fish" +
-                "        line - message when line is broken" +
-                "        loose - message when fish escaped" +
-                "        noFishingRod - message when player switched item and bobber do not exists" +
-                "    win - message when player catches fish" +
-                "messages - regular chat messages from commands";
+                "game - messages of game (actionbar)\n" +
+                "    start - message when game started\n" +
+                "    loose - messages when player looses fish\n" +
+                "        line - message when line is broken\n" +
+                "        loose - message when fish escaped\n" +
+                "        noFishingRod - message when player switched item and bobber do not exists\n" +
+                "    win - message when player catches fish\n" +
+                "messages - regular chat messages from commands\n";
 
         addDefault("progress.char.background", "&8█");
         addDefault("progress.char.main", "█");
