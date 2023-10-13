@@ -82,7 +82,7 @@ public class Game {
                 try {
                     dropItem = FishingSpots.rewardsConfig.items.get(Utils.generateRarity(FishingSpots.rewardsConfig.rarities.get(spot.getRarity())));
                 } catch (Exception e) {
-                    FishingSpots.getInstance().getLogger().severe("Invalid config.yml configuration. Rarities do not have 100% rarity!");
+                    FishingSpots.getInstance().getLogger().severe("Invalid rewards.yml configuration. Rarities do not have 100% rarity!");
                     Bukkit.getPluginManager().disablePlugin(FishingSpots.getInstance());
                 }
                 if (dropItem == null) return;
