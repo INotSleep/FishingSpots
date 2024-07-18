@@ -6,6 +6,7 @@ import me.inotsleep.fishingspots.spots.Spot;
 import me.inotsleep.fishingspots.spots.SpotEffect;
 import me.inotsleep.fishingspots.spots.SpotsManager;
 import me.inotsleep.fishingspots.utils.Utils;
+import me.inotsleep.utils.MessageUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -72,12 +73,12 @@ public class Game {
         end = true;
         switch (reason) {
             case LINE: {
-                this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(FishingSpots.messages.getString("game.loose.line")));
+                this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', Messages.looseLine)));
                 damageHook();
                 break;
             }
             case CATCH: {
-                this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(FishingSpots.messages.getString("game.win")));
+                this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', Messages.win)));
                 DropItems dropItem = null;
                 try {
                     dropItem = FishingSpots.rewardsConfig.items.get(Utils.generateRarity(FishingSpots.rewardsConfig.rarities.get(spot.getRarity())));
@@ -96,12 +97,12 @@ public class Game {
                 break;
             }
             case LOOSE: {
-                this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(FishingSpots.messages.getString("game.loose.loose")));
+                this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', Messages.looseLoose)));
                 damageHook();
                 break;
             }
             case UNKNOWN: {
-                if (player.isOnline()) this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(FishingSpots.messages.getString("game.loose.noFishingRod")));
+                if (player.isOnline()) this.player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', Messages.looseNoFishingRod)));
                 break;
             }
         }
@@ -121,11 +122,11 @@ public class Game {
     }
 
     private void print() {
-        int length = FishingSpots.messages.config.getInt("progress.length");
+        int length = Messages.length;
         int progress = (int) (length - Math.floor(length *(catching+1)/2));
-        String main = FishingSpots.messages.getString("progress.char.main");
-        String bkg = FishingSpots.messages.getString("progress.char.background");
-        String curr = FishingSpots.messages.getString("progress.char.current");
+        String main = ChatColor.translateAlternateColorCodes('&', Messages.charMain);
+        String bkg = ChatColor.translateAlternateColorCodes('&', Messages.charBackground);
+        String curr = ChatColor.translateAlternateColorCodes('&', Messages.charCurrent);
         String color = Messages.getColor(line);
         StringBuilder str = new StringBuilder();
         for (int i = 0; i<length; i++) {
@@ -138,7 +139,7 @@ public class Game {
             stopGame(Reason.UNKNOWN);
             return;
         }
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(FishingSpots.messages.format(FishingSpots.messages.getString("progress.format"), ChatColor.translateAlternateColorCodes('&', str.toString()))));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', MessageUtil.parsePlaceholders(Messages.format, str.toString()))));
     }
 
     public enum Reason {

@@ -1,10 +1,13 @@
 package me.inotsleep.fishingspots.commands;
 
 import me.inotsleep.fishingspots.FishingSpots;
+import me.inotsleep.fishingspots.Messages;
 import me.inotsleep.fishingspots.game.DropItems;
 import me.inotsleep.fishingspots.spots.Spot;
 import me.inotsleep.fishingspots.spots.SpotsManager;
 import me.inotsleep.utils.AbstractCommand;
+import me.inotsleep.utils.MessageUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainCommand extends AbstractCommand {
     public MainCommand() {
@@ -34,7 +38,7 @@ public class MainCommand extends AbstractCommand {
                     if (commandSender instanceof Player) {
                         Player player = (Player) commandSender;
                         if (!player.hasPermission("fishingspots.admin.createItem")) {
-                            player.sendMessage(FishingSpots.messages.getString("messages.noPermission"));
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', Messages.noPermission));
                             return;
                         }
                         if (args.length != 2) {
@@ -55,7 +59,7 @@ public class MainCommand extends AbstractCommand {
                 }
                 case "reload": {
                     if (!commandSender.hasPermission("fishingspots.admin.reload")) {
-                        commandSender.sendMessage(FishingSpots.messages.getString("messages.noPermission"));
+                        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', Messages.noPermission));
                         return;
                     }
                     FishingSpots.reload();
@@ -66,11 +70,11 @@ public class MainCommand extends AbstractCommand {
                     if (commandSender instanceof Player) {
                         Player player = (Player) commandSender;
                         if (!player.hasPermission("fishingspots.admin.spawnSpot")) {
-                            player.sendMessage(FishingSpots.messages.getString("messages.noPermission"));
+                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', Messages.noPermission));
                             return;
                         }
                         Block block = player.getWorld().getHighestBlockAt(player.getLocation());
-                        if (!FishingSpots.config.allowedBlocks.contains(block.getType())) {
+                        if (!FishingSpots.config.allowedBlocks.stream().map(Material::matchMaterial).collect(Collectors.toList()).contains(block.getType())) {
                             player.sendMessage("You must be above one of allowed blocks!");
                             return;
                         }

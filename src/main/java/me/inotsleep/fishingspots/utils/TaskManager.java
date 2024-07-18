@@ -31,16 +31,15 @@ public class TaskManager {
     public void reloadValues() {
         if (spawnTask != null) spawnTask.cancel();
         if (tickTask != null) tickTask.cancel();
-        config = FishingSpots.config;
-        ticksPerPlaceSpawn = config.config.getInt("settings.ticksPerPlaceSpawn");
-        min = config.config.getDouble("settings.spawnRange.min");
-        max = config.config.getDouble("settings.spawnRange.max");
-        maxAttempts = config.config.getInt("settings.waterFindAttempts");
+        ticksPerPlaceSpawn = Config.ticksPerPlaceSpawn;
+        min = Config.spawnRangeMin;
+        max = Config.spawnRangeMax;
+        maxAttempts = Config.waterFindAttempts;
         spawnTask = new BukkitRunnable() {
             @Override
             public void run() {
                 Bukkit.getOnlinePlayers().forEach(player -> {
-                    if (config.config.getDouble("settings.placeSpawnChance")/100 > Math.random()) {
+                    if (Config.placeSpawnChance/100 > Math.random()) {
                         int attempts = 0;
 
                         while(attempts < maxAttempts) {

@@ -1,8 +1,16 @@
 package me.inotsleep.fishingspots.utils;
 
-public class Pair {
+import me.inotsleep.utils.config.Serializable;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+public class Pair implements Serializable {
     double k;
     double v;
+
+    public static Pair deserialize(ConfigurationSection section) {
+        return new Pair(section.getDouble("min"), section.getDouble("max"));
+    }
 
     public double getK() {
         return k;
@@ -30,4 +38,11 @@ public class Pair {
     }
 
 
+    @Override
+    public ConfigurationSection serialize() {
+        ConfigurationSection section = new YamlConfiguration();
+        section.set("min", k);
+        section.set("max", v);
+        return section;
+    }
 }

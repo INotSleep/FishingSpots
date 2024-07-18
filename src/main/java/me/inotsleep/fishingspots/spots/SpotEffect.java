@@ -1,19 +1,14 @@
 package me.inotsleep.fishingspots.spots;
 
-import me.inotsleep.fishingspots.FishingSpots;
 import me.inotsleep.fishingspots.utils.Pair;
-import me.inotsleep.fishingspots.utils.Utils;
-import org.bukkit.Bukkit;
+import me.inotsleep.utils.config.Serializable;
+import me.inotsleep.utils.particle.compiled.CompiledAnimation;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-public class SpotEffect {
-    CustomParticle randomParticle;
-    List<Circle> circles = new ArrayList<>();
+public class SpotEffect implements Serializable {
+    CompiledAnimation animation;
     double radius;
     Pair lineDamage;
     Pair lineRestore;
@@ -36,53 +31,38 @@ public class SpotEffect {
     }
 
     Pair catchingRegress;
-    public SpotEffect(String randomParticle, List<Map<String, Object>> list, String rarity, double radius, Pair lineRestore, Pair lineDamage, Pair catchingProgress, Pair catchingRegress) {
+
+    public SpotEffect(double radius, Pair lineRestore, Pair lineDamage, Pair catchingProgress, Pair catchingRegress) {
         this.catchingProgress = catchingProgress;
         this.catchingRegress = catchingRegress;
         this.lineDamage = lineDamage;
         this.lineRestore = lineRestore;
-        this.randomParticle = SpotsManager.particles.get(randomParticle);
         this.radius = radius;
-        if (this.randomParticle == null) {
-            FishingSpots.getInstance().getLogger().severe("Invalid spotsEffects.yml configuration. Effect "+ rarity + " have not existing particle!");
-            Bukkit.getPluginManager().disablePlugin(FishingSpots.getInstance());
-            return;
-        }
-        try {
-            for (Map<String, Object> stringObjectMap : list) {
-                circles.add(new Circle((double) stringObjectMap.get("radius"), SpotsManager.particles.get((String) stringObjectMap.get("particle")), (int) stringObjectMap.get("particleCount")));
-            }
-        } catch (ClassCastException e) {
-            FishingSpots.getInstance().getLogger().severe("Invalid spotsEffects.yml configuration. Please save and recreate this file!");
-            Bukkit.getPluginManager().disablePlugin(FishingSpots.getInstance());
-        }
     }
 
-    public void draw(int tick,Location location) {
-        if (tick%4 == 0) {
-            location.getWorld().spawnParticle(randomParticle.particle, location.getX()+Utils.random(-0.3d, 0.3d), location.getY()+Utils.random(0d, 0.3d), location.getZ()+Utils.random(-0.3d, 0.3d), 1, 0d, 0d, 0d, 0d, randomParticle.data);
-            circles.forEach(circle -> circle.draw(location));
-        }
+    public void setAnimation(CompiledAnimation animation) {
+        this.animation = animation;
     }
-    
-    static class Circle {
-        double radius;
-        CustomParticle particle;
-        int particleCount;
-        
-        public Circle(double radius, CustomParticle particle, int particleCount) {
-            this.particle = particle;
-            this.radius = radius;
-            this.particleCount = particleCount;
-        }
 
-        public void draw(Location location) {
-            World world = location.getWorld();
-            for (double i = 0; i < 2*Math.PI; i += 2*Math.PI/particleCount) {
-                double x = Math.sin(i)*radius;
-                double z = Math.cos(i)*radius;
-                world.spawnParticle(particle.particle, x+location.getX(), location.getY(), z+location.getZ(), 1, 0d, 0d, 0d, 0d, particle.data);
-            }
-        }
+    public void draw(int tick, Location location) {
+        animation.drawFrame(location.getWorld(), location.getX(), location.getY(), location.getZ(), tick%animation.frames.size());
+    }
+
+    @Override
+    public ConfigurationSection serialize() {
+        ConfigurationSection section = new YamlConfiguration();
+
+        section.set("catchingProgress", catchingProgress.serialize());
+        section.set("catchingRegress", catchingRegress.serialize());
+        section.set("lineDamage", lineDamage.serialize());
+        section.set("lineRestore", lineRestore.serialize());
+        section.set("radius", radius);
+
+
+        return section;
+    }
+
+    public static SpotEffect deserialize(ConfigurationSection section) {
+        return new SpotEffect(section.getDouble("radius"), Pair.deserialize(section.getConfigurationSection("lineRestore")), Pair.deserialize(section.getConfigurationSection("lineDamage")), Pair.deserialize(section.getConfigurationSection("catchingProgress")), Pair.deserialize(section.getConfigurationSection("catchingRegress")));
     }
 }

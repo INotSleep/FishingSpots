@@ -4,10 +4,11 @@ plugins {
 }
 
 group = 'me.inotsleep'
-version = '1.0'
+version = '1.1'
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven {
         name = "spigotmc-repo"
         url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
@@ -20,11 +21,11 @@ repositories {
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT"
-    implementation(files("./utils.jar"))
+    implementation("me.inotsleep:utils:1.0.2")
 }
 
 shadowJar {
-    mergeServiceFiles("./utils.jar")
+
 }
 
 def targetJavaVersion = 8

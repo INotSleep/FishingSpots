@@ -13,7 +13,7 @@ public class Spot {
     int tick = 0;
 
     public Spot(String rarity, Location location) throws IllegalArgumentException {
-        effect = SpotsManager.effects.get(rarity);
+        effect = SpotsEffectConfig.effects.get(rarity);
         this.rarity = rarity;
         this.location = location;
     }
@@ -27,7 +27,7 @@ public class Spot {
             Bukkit.getPluginManager().disablePlugin(FishingSpots.getInstance());
         }
         if (rarity == null) return;
-        effect = SpotsManager.effects.get(rarity);
+        effect = SpotsEffectConfig.effects.get(rarity);
         if (effect == null) {
             FishingSpots.getInstance().getLogger().severe("Rarity " + rarity + "does not have effect! You must create it in spotsEffects.yml");
             Bukkit.getPluginManager().disablePlugin(FishingSpots.getInstance());

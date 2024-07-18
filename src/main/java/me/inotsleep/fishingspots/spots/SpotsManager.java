@@ -10,7 +10,6 @@ import java.util.Map;
 public class SpotsManager {
     public static List<Spot> spots = new ArrayList<>();
     static Map<String, SpotEffect> effects = new HashMap<>();
-    static Map<String, CustomParticle> particles = new HashMap<>();
     static List<Spot> toRemove = new ArrayList<>();
     public void draw() {
         spots.forEach(Spot::draw);

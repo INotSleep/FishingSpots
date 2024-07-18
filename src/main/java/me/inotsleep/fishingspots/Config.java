@@ -1,57 +1,55 @@
 package me.inotsleep.fishingspots;
 
-import me.inotsleep.utils.AbstractConfig;
+import me.inotsleep.utils.config.AbstractConfig;
 import me.inotsleep.utils.AbstractPlugin;
+import me.inotsleep.utils.config.Path;
 import org.bukkit.Material;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Config extends AbstractConfig {
-    public Map<Double, String> rarities;
-    public List<Material> allowedBlocks;
+    @Path(path = "settings.rarityChances")
+    public Map<String, Double> rarities;
+
+    @Path(path = "settings.allowedBlocks")
+    public List<String> allowedBlocks = Collections.singletonList("WATER");
+
+    @Path(path="settings.ticksPerPlaceSpawn")
+    public static int ticksPerPlaceSpawn = 20;
+    @Path(path="settings.placeSpawnChance")
+    public static double placeSpawnChance = 0.1d;
+    @Path(path="settings.waterFindAttempts")
+    public static int waterFindAttempts = 3;
+    @Path(path="settings.spawnRange.min")
+    public static double spawnRangeMin = 20d;
+    @Path(path="settings.spawnRange.max")
+    public static double spawnRangeMax = 50d;
 
     public Config(AbstractPlugin plugin) {
-        super(plugin, "config.yml", false);
+        super(plugin, "config.yml");
     }
 
     @Override
-    public void addDefaults() {
-        header= "settings:\n" +
+    public String getHeader() {
+        return "settings:\n" +
                 "    ticksPerPlaceSpawn - ticks beetwen trying to spawn a fishing spot\n" +
                 "    placeSpawnChance - chance to create fishing spot (per player)\n" +
                 "    waterFindAttempts - number of attempts to find place for spawn\n" +
                 "    rarityChances - rarity and his chances. There must always be 100% rarity!!\n" +
                 "    spawnRange - range from player to spawn fishing spot";
-
-        addDefault("settings.ticksPerPlaceSpawn", 20);
-        addDefault("settings.placeSpawnChance", 0.1d);
-        addDefault("settings.waterFindAttempts", 3);
-
-        addDefault("settings.rarityChances.common", 100d);
-        addDefault("settings.rarityChances.uncommon", 30d);
-        addDefault("settings.rarityChances.rare", 10d);
-        addDefault("settings.rarityChances.epic", 3d);
-        addDefault("settings.rarityChances.legendary", 0.1d);
-
-        addDefault("settings.spawnRange.min", 20d);
-        addDefault("settings.spawnRange.max", 50d);
-        addDefault("settings.allowedBlocks", Collections.singletonList("WATER"));
     }
 
     @Override
-    public void doReloadConfig() {
+    public void saveDefaults() {
         rarities = new HashMap<>();
-        allowedBlocks = config.getStringList("settings.allowedBlocks").stream().map(Material::matchMaterial).collect(Collectors.toList());
 
-        config.getConfigurationSection("settings.rarityChances").getKeys(false).forEach(key -> rarities.put(config.getDouble("settings.rarityChances."+key), key));
-    }
-
-    @Override
-    public void doSave() {
-
+        rarities.put("common", 100d);
+        rarities.put("uncommon", 30d);
+        rarities.put("rare", 10d);
+        rarities.put("epic", 3d);
+        rarities.put("legendary", 0.1d);
     }
 }
