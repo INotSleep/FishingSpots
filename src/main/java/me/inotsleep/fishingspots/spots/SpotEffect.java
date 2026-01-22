@@ -1,18 +1,30 @@
 package me.inotsleep.fishingspots.spots;
 
+import com.inotsleep.insutils.api.config.Path;
+import com.inotsleep.insutils.api.particle.compiled.CompiledAnimation;
+import com.inotsleep.insutils.spi.config.SerializableObject;
 import me.inotsleep.fishingspots.utils.Pair;
-import me.inotsleep.utils.config.Serializable;
-import me.inotsleep.utils.particle.compiled.CompiledAnimation;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-public class SpotEffect implements Serializable {
+public class SpotEffect extends SerializableObject {
     CompiledAnimation animation;
+
+    @Path("radius")
     double radius;
+
+    @Path("lineDamage")
     Pair lineDamage;
+
+    @Path("lineRestore")
     Pair lineRestore;
+
+    @Path("catchingProgress")
     Pair catchingProgress;
+
+    @Path("catchingRegress")
+    Pair catchingRegress;
+
+    public SpotEffect() {}
 
     public Pair getLineDamage() {
         return lineDamage;
@@ -30,8 +42,6 @@ public class SpotEffect implements Serializable {
         return catchingRegress;
     }
 
-    Pair catchingRegress;
-
     public SpotEffect(double radius, Pair lineRestore, Pair lineDamage, Pair catchingProgress, Pair catchingRegress) {
         this.catchingProgress = catchingProgress;
         this.catchingRegress = catchingRegress;
@@ -46,23 +56,5 @@ public class SpotEffect implements Serializable {
 
     public void draw(int tick, Location location) {
         animation.drawFrame(location.getWorld(), location.getX(), location.getY(), location.getZ(), tick%animation.frames.size());
-    }
-
-    @Override
-    public ConfigurationSection serialize() {
-        ConfigurationSection section = new YamlConfiguration();
-
-        section.set("catchingProgress", catchingProgress.serialize());
-        section.set("catchingRegress", catchingRegress.serialize());
-        section.set("lineDamage", lineDamage.serialize());
-        section.set("lineRestore", lineRestore.serialize());
-        section.set("radius", radius);
-
-
-        return section;
-    }
-
-    public static SpotEffect deserialize(ConfigurationSection section) {
-        return new SpotEffect(section.getDouble("radius"), Pair.deserialize(section.getConfigurationSection("lineRestore")), Pair.deserialize(section.getConfigurationSection("lineDamage")), Pair.deserialize(section.getConfigurationSection("catchingProgress")), Pair.deserialize(section.getConfigurationSection("catchingRegress")));
     }
 }

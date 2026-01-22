@@ -1,16 +1,14 @@
 package me.inotsleep.fishingspots.utils;
 
-import me.inotsleep.utils.config.Serializable;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.inotsleep.insutils.api.config.Path;
+import com.inotsleep.insutils.spi.config.SerializableObject;
 
-public class Pair implements Serializable {
+public class Pair extends SerializableObject {
+    @Path("min")
     double k;
-    double v;
 
-    public static Pair deserialize(ConfigurationSection section) {
-        return new Pair(section.getDouble("min"), section.getDouble("max"));
-    }
+    @Path("max")
+    double v;
 
     public double getK() {
         return k;
@@ -37,12 +35,5 @@ public class Pair implements Serializable {
         return Utils.random(k, v);
     }
 
-
-    @Override
-    public ConfigurationSection serialize() {
-        ConfigurationSection section = new YamlConfiguration();
-        section.set("min", k);
-        section.set("max", v);
-        return section;
-    }
+    public Pair() {}
 }

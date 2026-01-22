@@ -1,11 +1,10 @@
 package me.inotsleep.fishingspots.utils;
 
-import me.inotsleep.fishingspots.Config;
+import me.inotsleep.fishingspots.MainConfig;
 import me.inotsleep.fishingspots.FishingSpots;
 import me.inotsleep.fishingspots.game.GameManager;
 import me.inotsleep.fishingspots.spots.Spot;
 import me.inotsleep.fishingspots.spots.SpotsManager;
-import me.inotsleep.utils.AbstractPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,8 +13,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class TaskManager {
 
-    private final AbstractPlugin plugin;
-    Config config;
+    private final FishingSpots plugin;
+    MainConfig config;
     int ticksPerPlaceSpawn;
     double min;
     double max;
@@ -23,7 +22,7 @@ public class TaskManager {
     public BukkitRunnable spawnTask;
     public BukkitRunnable tickTask;
 
-    public TaskManager(AbstractPlugin plugin) {
+    public TaskManager(FishingSpots plugin) {
         this.plugin = plugin;
         reloadValues();
     }
@@ -31,15 +30,15 @@ public class TaskManager {
     public void reloadValues() {
         if (spawnTask != null) spawnTask.cancel();
         if (tickTask != null) tickTask.cancel();
-        ticksPerPlaceSpawn = Config.ticksPerPlaceSpawn;
-        min = Config.spawnRangeMin;
-        max = Config.spawnRangeMax;
-        maxAttempts = Config.waterFindAttempts;
+        ticksPerPlaceSpawn = FishingSpots.config.settings.ticksPerPlaceSpawn;
+        min = FishingSpots.config.settings.spawnRange.min;
+        max = FishingSpots.config.settings.spawnRange.max;
+        maxAttempts = FishingSpots.config.settings.waterFindAttempts;
         spawnTask = new BukkitRunnable() {
             @Override
             public void run() {
                 Bukkit.getOnlinePlayers().forEach(player -> {
-                    if (Config.placeSpawnChance/100 > Math.random()) {
+                    if (FishingSpots.config.settings.placeSpawnChance/100 > Math.random()) {
                         int attempts = 0;
 
                         while(attempts < maxAttempts) {

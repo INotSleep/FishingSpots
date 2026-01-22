@@ -1,5 +1,9 @@
 package me.inotsleep.fishingspots;
 
+import com.inotsleep.insutils.api.logging.LoggingManager;
+import com.inotsleep.insutils.api.particle.Animation;
+import com.inotsleep.insutils.api.particle.compiler.Compiler;
+import com.inotsleep.insutils.spi.plugin.BukkitPlugin;
 import me.inotsleep.fishingspots.commands.MainCommand;
 import me.inotsleep.fishingspots.game.GameManager;
 import me.inotsleep.fishingspots.game.RewardsConfig;
@@ -7,21 +11,23 @@ import me.inotsleep.fishingspots.spots.SpotsEffectConfig;
 import me.inotsleep.fishingspots.spots.SpotsManager;
 import me.inotsleep.fishingspots.utils.Listeners;
 import me.inotsleep.fishingspots.utils.TaskManager;
-import me.inotsleep.utils.AbstractPlugin;
-import me.inotsleep.utils.particle.Animation;
-import me.inotsleep.utils.particle.compiler.Compiler;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
-public final class FishingSpots extends AbstractPlugin {
-    public static Config config;
+public final class FishingSpots extends BukkitPlugin {
+    private static FishingSpots instance;
+    public static MainConfig config;
     public static SpotsEffectConfig spotsEffectConfig;
     public static SpotsManager spotsManager;
     public static GameManager gameManager;
     public static TaskManager taskManager;
-    public static Messages messages;
     public static RewardsConfig rewardsConfig;
+
+    public static @NotNull FishingSpots getInstance() {
+        return instance;
+    }
 
     @Override
     public void doDisable() {
@@ -29,15 +35,19 @@ public final class FishingSpots extends AbstractPlugin {
     }
 
     @Override
+    public void doLoad() {
+        instance = this;
+    }
+
+    @Override
     public void doEnable() {
         spotsManager = new SpotsManager();
         gameManager = new GameManager();
-        config = new Config(this);
-        spotsEffectConfig = new SpotsEffectConfig(this);
+        config = new MainConfig(getDataFolder());
+        spotsEffectConfig = new SpotsEffectConfig(getDataFolder());
         Bukkit.getPluginManager().registerEvents(new Listeners(), this);
         taskManager = new TaskManager(this);
-        messages = new Messages(this);
-        rewardsConfig = new RewardsConfig(this);
+        rewardsConfig = new RewardsConfig(getDataFolder());
 
         reload();
         new MainCommand();
@@ -46,7 +56,6 @@ public final class FishingSpots extends AbstractPlugin {
     public static void reload() {
         spotsManager.clear();
         gameManager.clear();
-        messages.reload();
         config.reload();
         spotsEffectConfig.reload();
         taskManager.reloadValues();
@@ -55,23 +64,24 @@ public final class FishingSpots extends AbstractPlugin {
         SpotsEffectConfig.effects.forEach((k, v) -> {
             Animation animation = SpotsEffectConfig.animations.get(k);
             if (animation == null) {
-                FishingSpots.printError("Effect "+k+" does not having animation!", true);
+                LoggingManager.error("Effect "+k+" does not having animation!");
+                Bukkit.getPluginManager().disablePlugin(instance);
             }
             v.setAnimation(new Compiler(animation).compile());
         });
-        Messages.damageColors = new HashMap<>();
+        config.damageColors = new HashMap<>();
 
-        Messages.rawColors.forEach(s -> {
+        config.progress.rawColors.forEach(s -> {
             String[] str = s.split("\\|");
                     if (str.length <=1) {
-                        FishingSpots.getInstance().getLogger().severe("Invalid messages.yml configuration. Colors must have format: 'damage(double)|color(any)'!");
+                        LoggingManager.error("Invalid messages.yml configuration. Colors must have format: 'damage(double)|color(any)'!");
                         Bukkit.getPluginManager().disablePlugin(FishingSpots.getInstance());
                         return;
                     }
                     try {
-                        Messages.damageColors.put(Double.parseDouble(str[0]), str[1]);
+                        config.damageColors.put(Double.parseDouble(str[0]), str[1]);
                     } catch (NumberFormatException e) {
-                        FishingSpots.getInstance().getLogger().severe("Invalid messages.yml configuration. Colors must have format: 'damage(double)|color(any)'!");
+                        LoggingManager.error("Invalid messages.yml configuration. Colors must have format: 'damage(double)|color(any)'!");
                         Bukkit.getPluginManager().disablePlugin(FishingSpots.getInstance());
                     }
         });

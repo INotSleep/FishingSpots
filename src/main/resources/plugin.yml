@@ -1,6 +1,9 @@
 name: FishingSpots
 version: '${version}'
 main: me.inotsleep.fishingspots.FishingSpots
-api-version: '1.16'
+api-version: '1.21'
 authors:
   - INotSleep
+
+depend:
+  - INSUtils

@@ -1,13 +1,10 @@
 package me.inotsleep.fishingspots.commands;
 
+import com.inotsleep.insutils.spi.objects.Command;
 import me.inotsleep.fishingspots.FishingSpots;
-import me.inotsleep.fishingspots.Messages;
 import me.inotsleep.fishingspots.game.DropItems;
 import me.inotsleep.fishingspots.spots.Spot;
 import me.inotsleep.fishingspots.spots.SpotsManager;
-import me.inotsleep.utils.AbstractCommand;
-import me.inotsleep.utils.MessageUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,11 +13,10 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class MainCommand extends AbstractCommand {
+public class MainCommand extends Command {
     public MainCommand() {
-        super("fishingspots", "fishingspots");
+        super(FishingSpots.getInstance(),"fishingspots", "fishingspots");
     }
 
     @Override
@@ -28,17 +24,16 @@ public class MainCommand extends AbstractCommand {
         if (args.length == 0) {
             if (commandSender.hasPermission("fishingspots.version")) {
                 commandSender.sendMessage("/==============\n" +
-                        "| FishingSpots v"+FishingSpots.getInstance().getDescription().getVersion() + "\n" +
-                        "| Authors: " + String.join(" ", FishingSpots.getInstance().getDescription().getAuthors()) + "\n" +
+                        "| FishingSpots v"+FishingSpots.getInstance().getPluginMeta().getVersion() + "\n" +
+                        "| Authors: " + String.join(" ", FishingSpots.getInstance().getPluginMeta().getAuthors()) + "\n" +
                         "\\==============");
             }
         } else {
             switch(args[0].toLowerCase()) {
                 case "createitem": {
-                    if (commandSender instanceof Player) {
-                        Player player = (Player) commandSender;
+                    if (commandSender instanceof Player player) {
                         if (!player.hasPermission("fishingspots.admin.createItem")) {
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', Messages.noPermission));
+                            player.sendMessage(FishingSpots.getInstance().getString("messages.no_permission", player));
                             return;
                         }
                         if (args.length != 2) {
@@ -59,7 +54,7 @@ public class MainCommand extends AbstractCommand {
                 }
                 case "reload": {
                     if (!commandSender.hasPermission("fishingspots.admin.reload")) {
-                        commandSender.sendMessage(ChatColor.translateAlternateColorCodes('&', Messages.noPermission));
+                        commandSender.sendMessage(FishingSpots.getInstance().getString("messages.no_permission"));
                         return;
                     }
                     FishingSpots.reload();
@@ -67,14 +62,13 @@ public class MainCommand extends AbstractCommand {
                     break;
                 }
                 case "spawnspot": {
-                    if (commandSender instanceof Player) {
-                        Player player = (Player) commandSender;
+                    if (commandSender instanceof Player player) {
                         if (!player.hasPermission("fishingspots.admin.spawnSpot")) {
-                            player.sendMessage(ChatColor.translateAlternateColorCodes('&', Messages.noPermission));
+                            player.sendMessage(FishingSpots.getInstance().getString("messages.no_permission", player));
                             return;
                         }
                         Block block = player.getWorld().getHighestBlockAt(player.getLocation());
-                        if (!FishingSpots.config.allowedBlocks.stream().map(Material::matchMaterial).collect(Collectors.toList()).contains(block.getType())) {
+                        if (!FishingSpots.config.settings.allowedBlocks.contains(block.getType())) {
                             player.sendMessage("You must be above one of allowed blocks!");
                             return;
                         }
