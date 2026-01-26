@@ -13,10 +13,13 @@ public class Spot {
     boolean locked = false;
     int tick = 0;
 
+    int lifeTime;
+
     public Spot(String rarity, Location location) throws IllegalArgumentException {
         effect = SpotsEffectConfig.effects.get(rarity);
         this.rarity = rarity;
         this.location = location;
+        saveLifeTime();
     }
 
     public Spot(Location location) {
@@ -35,11 +38,22 @@ public class Spot {
         }
         this.rarity = rarity;
         this.location = location;
+        saveLifeTime();
+    }
+
+    private void saveLifeTime() {
+        lifeTime = FishingSpots.config.settings.lifeTime.getOrDefault(rarity, 60 * 20);
+    }
+
+    private void checkRemovable() {
+        if (locked) return;
+        if (tick>=lifeTime) SpotsManager.removeSpot(this);
     }
 
     public void draw() {
         effect.draw(tick, location);
         tick++;
+        checkRemovable();
     }
 
     public boolean checkLocation(Location location) {

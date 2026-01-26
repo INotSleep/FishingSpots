@@ -1,5 +1,6 @@
 package me.inotsleep.fishingspots;
 
+import com.inotsleep.insutils.api.config.Comment;
 import com.inotsleep.insutils.api.config.Header;
 import com.inotsleep.insutils.api.config.Path;
 import com.inotsleep.insutils.spi.config.Config;
@@ -36,6 +37,16 @@ public class MainConfig extends Config {
                 "rare", 10d,
                 "epic", 3d,
                 "legendary", 0.1d
+        );
+
+        @Comment("Time of existence of each spot in ticks (1/20 of second)")
+        @Path("life-time")
+        public Map<String, Integer> lifeTime = Map.of(
+                "common", 2*20*60,
+                "uncommon", 5*10*60,
+                "rare", 3*20*60,
+                "epic", 7*10*60,
+                "legendary", 4*20*60
         );
 
         @Path("allowedBlocks")
