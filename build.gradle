@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT"
-    compileOnly "com.inotsleep:insutils-api:2.0.0-SNAPSHOT:ebcf775"
+    compileOnly "com.inotsleep:insutils-api:2.0.0"
 }
 
 shadowJar {
